@@ -85,14 +85,22 @@ app = FastAPI(
     description="Detects silent content-level bugs in public GitHub repositories.",
 )
 
-cors_origins = [
+dev_origins = {
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    "http://127.0.0.1:5175",
+}
+
+env_origins = [
     origin.strip()
-    for origin in os.getenv(
-        "CORS_ORIGINS",
-        "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175",
-    ).split(",")
+    for origin in os.getenv("CORS_ORIGINS", "").split(",")
     if origin.strip()
 ]
+
+cors_origins = list(dev_origins.union(env_origins))
 
 app.add_middleware(
     CORSMiddleware,
